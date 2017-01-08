@@ -1,7 +1,24 @@
 from urllib.request import urlopen
+from urllib.error import HTTPError
 from bs4 import BeautifulSoup
 
-html = urlopen("http://shizuru.hatenadiary.jp/entry/2017/01/08/001305")
-bsObj = BeautifulSoup(html.read(),"lxml")
-print(bsObj.h1)
+
+def getTitle(url):
+    try:
+        html = urlopen(url)
+    except HTTPError as e:
+        print(e)
+        return None
+    try:
+        bsObj = BeautifulSoup(html.read(), "lxml")
+        title = bsObj.body.h1
+    except AttributeError as e:
+        return None
+    return title
+
+title = getTitle("http://shizuru.hatenadiary.jp/entry/2017/01/08/001305")
+if title == None:
+    print("Title could not be found")
+else:
+    print(title)
 
